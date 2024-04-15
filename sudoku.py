@@ -44,10 +44,11 @@ class SudokuGenerator:
         with open(filename, "w") as file:
             file.write("==================\n")
             for line in self.board:
-                file.write(" ".join(map(str, line)) + "\n")
+                file.write(" ");
+                file.write(" ".join(map(str, line)) + " \n")
             file.write("==================\n")
             for line in self.masked_board:
-                file.write(" ".join(map(str, line)) + "\n")
+                file.write(" ".join(map(str, line)) + " \n")
             file.write("==================\n")
                 
     def generate_unique_pairs(self, N):

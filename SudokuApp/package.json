@@ -1,0 +1,43 @@
+{
+    "name": "SudokuApp",
+    "version": "1.0.0",
+    "main": "main.js",
+    "author": "Chahan",
+    "license": "MIT",
+    "scripts": {
+        "start": "electron ."
+    },
+    "devDependencies": {
+        "electron": "^29.3.0",
+        "electron-builder": "^24.13.3"
+    },
+    "build": {
+        "appId": "sudoku.app.electron",
+        "productName": "SudokuApp",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "dist/**/*",
+            "node_modules/**/*",
+            "index.html",
+            "index.js",
+            "package.json"
+        ],
+        "win": {
+            "target": "nsis"
+        },
+        "mac": {
+            "target": "dmg"
+        },
+        "linux": {
+            "target": [
+                "AppImage",
+                "deb"
+            ]
+        }
+    },
+    "dependencies": {
+        "electron-reload": "^2.0.0-alpha.1"
+    }
+}

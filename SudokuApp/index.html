@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Sudoku</title>
+    <link rel="stylesheet" href="./grid.css" />
+</head>
+
+<body>
+    <div id="sudoku-grid" class="sudoku-grid"></div>
+    <div id="numberPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <div class="number-grid">
+            </div>
+        </div>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+
+</html>
