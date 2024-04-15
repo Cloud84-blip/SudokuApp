@@ -1,6 +1,11 @@
 let solution;
 
 
+/*  
+ * Create the sudoku grid
+ * @return {void}
+ */
+
 function createSudokuGrid() {
     const gridElement = document.getElementById('sudoku-grid');
     for (let i = 0; i < 81; i++) {
@@ -24,13 +29,17 @@ function createSudokuGrid() {
     }
 }
 
+/*
+ * Load the sudoku file
+ * @return {void}
+ */
+
 function loadFile() {
     const data = window.electronAPI.loadFile();
     data.then((sudoku) => {
         createSudokuGrid();
         const cells = document.getElementsByClassName('sudoku-cell');
         solution = sudoku.split('==================')[1];
-        console.log(solution)
         sudoku.split('==================')[2].split(' ').forEach((value, index) => {
             if (value.length === 2) {
                 value = value[1];
@@ -48,6 +57,12 @@ function loadFile() {
     });
 }
 
+/*
+ * Verify if the sudoku is complete
+ * @return {void}
+ */
+
+
 function verifySudoku() {
     const cells = document.getElementsByClassName('sudoku-cell');
     let sudoku = '';
@@ -63,6 +78,13 @@ function verifySudoku() {
 
 loadFile();
 
+
+/*
+ * Generate numbers to be displayed in the popup
+ * @param {HTMLElement} element - The element that was clicked
+ * @param {number} index - The index of the element that was clicked
+ * @return {void}
+ */
 
 function generateNumbers(element, index) {
     const container = document.querySelector('.number-grid');
