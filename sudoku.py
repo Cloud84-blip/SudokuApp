@@ -2,7 +2,7 @@ import math
 import random, sys
 
 class SudokuGenerator:    
-    def __init__(self, total_size=9, num_visible=25):
+    def __init__(self, total_size=9, num_visible=0):
         self.board = []
         self.masked_board = []
         self.num_visible = num_visible
@@ -27,7 +27,7 @@ class SudokuGenerator:
             return self.solve_sudoku(board, row, col + 1)
 
         numbers = list(range(1, self.size + 1))
-        random.shuffle(numbers)
+        #random.shuffle(numbers)
         for num in numbers:
             if self.is_valid(board, row, col, num):
                 board[row][col] = num

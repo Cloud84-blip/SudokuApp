@@ -6,27 +6,36 @@ let solution;
  * @return {void}
  */
 
-function createSudokuGrid() {
+function createSudokuGrid(nb_cells = 81) {
     const gridElement = document.getElementById('sudoku-grid');
-    for (let i = 0; i < 81; i++) {
+    gridElement.classList.add('grid-template');
+    console.log(nb_cells);
+    for (let i = 0; i < nb_cells; i++) {
         const cell = document.createElement('div');
         cell.className = 'sudoku-cell';
+        const row_size = Math.floor(Math.sqrt(nb_cells));
 
-        console.log(i % 27)
-        if ((i % 27 >= 18)) {
+        if ((i % (row_size * Math.floor(Math.sqrt(row_size)))) >= (row_size * Math.floor(Math.sqrt(row_size))) - row_size) {
             cell.classList.add('bold-bottom-border');
+        }
+        if (i % Math.floor(Math.sqrt(row_size)) === Math.floor(Math.sqrt(row_size)) - 1) {
+            cell.classList.add('bold-right-border');
         }
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.maxLength = 1;
+        //input.maxLength = 1;
         input.oninput = function() {
-            this.value = this.value.replace(/[^1-9]/g, '');
+            this.value = this.value.replace(/[^1-9]+/g, '');
         };
 
         cell.appendChild(input);
         gridElement.appendChild(cell);
+
     }
+    const style = document.getElementById('style-head');
+    style.innerHTML = `.grid-template {display: grid;
+        gap: 1px; grid-template-columns: repeat(${Math.floor(Math.sqrt(nb_cells))}, 50px); }`;
 }
 
 /*
@@ -37,7 +46,8 @@ function createSudokuGrid() {
 function loadFile() {
     const data = window.electronAPI.loadFile();
     data.then((sudoku) => {
-        createSudokuGrid();
+        const nb_of_cells = sudoku.split('==================')[2].split(' ').length - 1;
+        createSudokuGrid(nb_of_cells);
         const cells = document.getElementsByClassName('sudoku-cell');
         solution = sudoku.split('==================')[1];
         sudoku.split('==================')[2].split(' ').forEach((value, index) => {
@@ -47,7 +57,7 @@ function loadFile() {
             if (value === 'X') {
                 cells[index].addEventListener('click', function(event) {
                     document.getElementById('numberPopup').style.display = 'block';
-                    generateNumbers(event.target, index);
+                    generateNumbers(event.target, index, nb_of_cells);
                 });
             }
             cells[index].children[0].value = (value === 'X') ? ' ' : value;
@@ -63,10 +73,10 @@ function loadFile() {
  */
 
 
-function verifySudoku() {
+function verifySudoku(nb_cells = 81) {
     const cells = document.getElementsByClassName('sudoku-cell');
     let sudoku = '';
-    for (let i = 0; i < 81; i++) {
+    for (let i = 0; i < nb_cells; i++) {
         sudoku += cells[i].children[0].value;
     }
     if (sudoku === solution) {
@@ -86,26 +96,27 @@ loadFile();
  * @return {void}
  */
 
-function generateNumbers(element, index) {
+function generateNumbers(element, index, nb_cells = 81) {
     const container = document.querySelector('.number-grid');
-    console.log(element)
-    let row = Math.floor(index / 9);
-    let column = index % 9;
+    const row_size = Math.floor(Math.sqrt(nb_cells));
+    const inner_row_size = Math.floor(Math.sqrt(row_size));
+    let row = Math.floor(index / row_size);
+    let column = index % row_size;
     container.innerHTML = ''; // Clear previous numbers if any
     element.innerHTML = '';
-    for (let i = 1; i <= 9; i++) {
+    for (let i = 1; i <= row_size; i++) {
         const numberDiv = document.createElement('div');
         numberDiv.textContent = i;
         numberDiv.addEventListener('click', function() {
             const cells = document.getElementsByClassName('sudoku-cell');
             // if there is the same number in the row, column or 3x3 grid, don't allow the user to place the number
-            for (let j = 0; j < 9; j++) {
-                if (cells[row * 9 + j].children[0].value === i.toString()) {
+            for (let j = 0; j < row_size; j++) {
+                if (cells[row * row_size + j].children[0].value === i.toString()) {
                     alert('Invalid placement: ' + i + ' already in row');
-                } else if (cells[j * 9 + column].children[0].value === i.toString()) {
+                } else if (cells[j * row_size + column].children[0].value === i.toString()) {
                     alert('Invalid placement: ' + i + ' already in column');
                     return;
-                } else if (cells[Math.floor(row / 3) * 27 + Math.floor(column / 3) * 3 + (j % 3) + 9 * Math.floor(j / 3)].children[0].value === i.toString()) {
+                } else if (cells[Math.floor(row / inner_row_size) * (row_size * Math.floor(Math.sqrt(row_size))) + Math.floor(column / inner_row_size) * inner_row_size + (j % inner_row_size) + row_size * Math.floor(j / inner_row_size)].children[0].value === i.toString()) {
                     alert('Invalid placement: ' + i + ' already in sub grid');
                     return;
                 }

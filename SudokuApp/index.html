@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'nonce-XYZ123'">
     <title>Sudoku</title>
+    <style id="style-head" nonce="XYZ123"></style>
     <link rel="stylesheet" href="./grid.css" />
 </head>
 
 <body>
-    <div id="sudoku-grid" class="sudoku-grid"></div>
+    <div id="sudoku-grid" class="grid-template"></div>
     <div id="numberPopup" class="popup">
         <div class="popup-content">
             <span class="close-btn">&times;</span>
