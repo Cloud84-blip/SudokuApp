@@ -4,3 +4,11 @@ lib/
 node_modules/
 pyvenv.cfg
 sudoku_complete.txt
+javaSolver/solver/target/solver-1.0-SNAPSHOT.jar
+javaSolver/solver/target/maven-archiver/pom.properties
+javaSolver/solver/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+javaSolver/solver/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+javaSolver/solver/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+javaSolver/solver/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+sudoku_output.txt
+message.txt

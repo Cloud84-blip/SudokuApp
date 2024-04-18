@@ -1,7 +1,11 @@
-/* .sudoku-grid {
-    display: grid;
-    gap: 1px;
-} */
+#checkValidity {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #75e375;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+}
 
 .sudoku-cell {
     display: flex;
@@ -21,11 +25,11 @@
 }
 
 .bold-right-border {
-    border-right: 2px solid black;
+    border-right: 7px solid black;
 }
 
 .bold-bottom-border {
-    border-bottom: 5px solid black;
+    border-bottom: 7px solid black;
 }
 
 

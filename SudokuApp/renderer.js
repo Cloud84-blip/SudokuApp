@@ -1,6 +1,22 @@
+document.getElementById('checkValidity').addEventListener('click', () => {
+    verifySudoku();
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.key === '=') {
+        window.electronAPI.zoomIn();
+    } else if (event.ctrlKey && event.key === '-') {
+        window.electronAPI.zoomOut();
+    } else if (event.ctrlKey && event.key === '0') {
+        window.electronAPI.resetZoom();
+    }
+});
+
+
+
+
+
 let solution;
-
-
 /*  
  * Create the sudoku grid
  * @return {void}
@@ -35,7 +51,7 @@ function createSudokuGrid(nb_cells = 81) {
     }
     const style = document.getElementById('style-head');
     style.innerHTML = `.grid-template {display: grid;
-        gap: 1px; grid-template-columns: repeat(${Math.floor(Math.sqrt(nb_cells))}, 50px); }`;
+        gap: 3px; grid-template-columns: repeat(${Math.floor(Math.sqrt(nb_cells))}, 50px); }`;
 }
 
 /*
@@ -51,8 +67,8 @@ function loadFile() {
         const cells = document.getElementsByClassName('sudoku-cell');
         solution = sudoku.split('==================')[1];
         sudoku.split('==================')[2].split(' ').forEach((value, index) => {
-            if (value.length === 2) {
-                value = value[1];
+            if (value.includes('\n')) {
+                value = value.replace('\n', '');
             }
             if (value === 'X') {
                 cells[index].addEventListener('click', function(event) {
@@ -73,16 +89,80 @@ function loadFile() {
  */
 
 
-function verifySudoku(nb_cells = 81) {
+function verifySudoku() {
     const cells = document.getElementsByClassName('sudoku-cell');
-    let sudoku = '';
-    for (let i = 0; i < nb_cells; i++) {
-        sudoku += cells[i].children[0].value;
+    let isComplete = true;
+    for (let i = 0; i < cells.length; i++) {
+        if (cells[i].children[0].value === ' ') {
+            isComplete = false;
+            break;
+        }
     }
-    if (sudoku === solution) {
-        alert('Congratulations! You have solved the sudoku');
+    if (isComplete) {
+        let row_size = Math.floor(Math.sqrt(cells.length));
+        let inner_row_size = Math.sqrt(row_size);
+
+
+        let flat_board = [].slice.call(cells).map(cell => cell.children[0].value);
+        let board = []; // 2D array
+        for (let i = 0; i < flat_board.length; i += row_size) {
+            let chunk = flat_board.slice(i, i + row_size);
+            board.push(chunk);
+        }
+
+
+
+
+        for (let i = 0; i < row_size; i++) {
+            let rowSet = new Set();
+            let colSet = new Set();
+            let boxSet = new Set();
+
+            for (let j = 0; j < row_size; j++) {
+                let rowVal = board[i][j];
+                let colVal = board[j][i];
+                let boxVal = board[inner_row_size * Math.floor(i / inner_row_size) + Math.floor(j / inner_row_size)][inner_row_size * (i % inner_row_size) + (j % inner_row_size)];
+
+                // Check if the current row value is valid
+                if (rowVal !== ' ') {
+                    if (rowSet.has(rowVal)) {
+                        console.log(rowSet,
+                            rowVal,
+                            rowSet.has(rowVal),
+                            i)
+
+                        console.error(`Invalid placement: ${rowVal} already in row ${i}`);
+                        return false;
+                    }
+                    rowSet.add(rowVal);
+                }
+
+                // Check if the current column value is valid
+                if (colVal !== ' ') {
+                    if (colSet.has(colVal)) {
+                        console.log(colSet,
+                            colVal,
+                            `at pos ${i},${j}`, )
+                        console.error(`Invalid placement: ${colVal} already in column ${i+1}`);
+                        return false;
+                    }
+                    console.log("inserting -- ", colVal, "at pos", i, j, "in colSet")
+                    colSet.add(colVal);
+                }
+
+                // Check if the current box value is valid
+                if (boxVal !== ' ') {
+                    if (boxSet.has(boxVal)) {
+                        console.error(`Invalid placement: ${boxVal} already in ${inner_row_size}x${inner_row_size} subgrid ${Math.floor(i / inner_row_size)}, ${Math.floor(j / inner_row_size)}`);
+                        return false;
+                    }
+                    boxSet.add(boxVal);
+                }
+            }
+        }
+        alert('Sudoku is complete');
     } else {
-        console.log("sudoku not complete yet");
+        alert('Sudoku is not complete');
     }
 }
 
