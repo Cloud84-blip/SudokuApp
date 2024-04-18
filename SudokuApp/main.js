@@ -47,13 +47,13 @@ ipcMain.handle('loadFile', async() => {
 ipcMain.on('zoom-in', (event) => {
     const webContents = event.sender;
     const currentZoom = webContents.getZoomFactor();
-    webContents.setZoomFactor(currentZoom + 0.1);
+    webContents.setZoomFactor(currentZoom + 0.01);
 });
 
 ipcMain.on('zoom-out', (event) => {
     const webContents = event.sender;
     const currentZoom = webContents.getZoomFactor();
-    webContents.setZoomFactor(currentZoom - 0.1);
+    webContents.setZoomFactor(currentZoom - 0.01);
 });
 
 ipcMain.on('reset-zoom', (event) => {

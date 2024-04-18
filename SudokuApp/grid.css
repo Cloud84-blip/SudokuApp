@@ -1,10 +1,19 @@
+/* Button 2 */
+
 #checkValidity {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #75e375;
-    color: white;
-    border-radius: 25px;
+    margin-top: 10px;
+    background: #2ecc71;
+    color: #fff;
+}
+
+#checkValidity:hover {
+    background: #27ae60;
     cursor: pointer;
+}
+
+#checkValidity:active {
+    background: #27ae60;
+    top: 2px;
 }
 
 .sudoku-cell {
