@@ -2,13 +2,76 @@ document.getElementById('checkValidity').addEventListener('click', () => {
     verifySudoku();
 });
 
+document.addEventListener('wheel', (event) => {
+    if (event.ctrlKey) {
+        // event.preventDefault();  
+
+        const scaleAmount = 0.1;  
+        const content = document.getElementById('sudoku-grid');
+        let scale = parseFloat(content.style.transform.replace(/[^0-9.]/g, '')) || 1;
+        
+        if (event.deltaY < 0) {
+            scale += scaleAmount;
+        } else {
+            scale -= scaleAmount;
+        }
+        scale = Math.max(0.1, Math.min(scale, 10));
+
+        const rect = content.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        console.log(x, y);
+
+        const deltaX = x * scaleAmount * (event.deltaY < 0 ? 1 : -1);
+        const deltaY = y * scaleAmount * (event.deltaY < 0 ? 1 : -1);
+
+        content.style.transformOrigin = `${x}px ${y}px`;
+        content.style.transform = `scale(${scale}) translate(${deltaX}px, ${deltaY}px)`;
+    }
+});
+
 document.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.key === '=') {
-        window.electronAPI.zoomIn();
-    } else if (event.ctrlKey && event.key === '-') {
-        window.electronAPI.zoomOut();
-    } else if (event.ctrlKey && event.key === '0') {
-        window.electronAPI.resetZoom();
+    if (event.code === 'Space') {
+        event.preventDefault(); 
+        document.body.style.cursor = 'grab';
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    if (event.code === 'Space') {
+        document.body.style.cursor = ''; 
+    }
+});
+
+let panning = false;
+let panStartX = 0;
+let panStartY = 0;
+
+document.addEventListener('mousedown', (event) => {
+    if (document.body.style.cursor === 'grab') {
+        panning = true;
+        panStartX = event.clientX;
+        panStartY = event.clientY;
+        document.body.style.cursor = 'grabbing';
+        event.target.style.cursor = 'grabbing';
+    }
+});
+
+document.addEventListener('mousemove', (event) => {
+    if (panning) {
+        const dx = event.clientX - panStartX;
+        const dy = event.clientY - panStartY;
+        window.scrollBy(-dx, -dy);
+        panStartX = event.clientX;
+        panStartY = event.clientY;
+    }
+});
+
+document.addEventListener('mouseup', (event) => {
+    if (panning) {
+        document.body.style.cursor = 'grab';
+        panning = false;
     }
 });
 
@@ -25,7 +88,6 @@ let solution;
 function createSudokuGrid(nb_cells = 81) {
     const gridElement = document.getElementById('sudoku-grid');
     gridElement.classList.add('grid-template');
-    console.log(nb_cells);
     for (let i = 0; i < nb_cells; i++) {
         const cell = document.createElement('div');
         cell.className = 'sudoku-cell';
@@ -40,6 +102,7 @@ function createSudokuGrid(nb_cells = 81) {
 
         const input = document.createElement('input');
         input.type = 'text';
+        input.className = "input-cells";
         //input.maxLength = 1;
         input.oninput = function() {
             this.value = this.value.replace(/[^1-9]+/g, '');
@@ -51,7 +114,7 @@ function createSudokuGrid(nb_cells = 81) {
     }
     const style = document.getElementById('style-head');
     style.innerHTML = `.grid-template {display: grid;
-        gap: 3px; grid-template-columns: repeat(${Math.floor(Math.sqrt(nb_cells))}, 50px); }`;
+        gap: 1px; grid-template-columns: repeat(${Math.floor(Math.sqrt(nb_cells))}, 50px); }`;
 }
 
 /*
@@ -62,7 +125,8 @@ function createSudokuGrid(nb_cells = 81) {
 function loadFile() {
     const data = window.electronAPI.loadFile();
     data.then((sudoku) => {
-        const nb_of_cells = sudoku.split('==================')[2].split(' ').length - 1;
+        const nb_of_cells = sudoku.split('==================')[2].split(' ').length -1;
+        console.log(nb_of_cells);
         createSudokuGrid(nb_of_cells);
         const cells = document.getElementsByClassName('sudoku-cell');
         solution = sudoku.split('==================')[1];

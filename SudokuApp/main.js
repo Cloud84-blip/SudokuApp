@@ -9,6 +9,8 @@ let sudoku_file;
 
 let win;
 
+const zoom = .5;
+
 function createWindow() {
     win = new BrowserWindow({
         width: 470,
@@ -41,22 +43,4 @@ ipcMain.handle('loadFile', async() => {
 
     sudoku_file = fs.readFileSync(result.filePaths[0], 'utf8');
     return sudoku_file;
-});
-
-
-ipcMain.on('zoom-in', (event) => {
-    const webContents = event.sender;
-    const currentZoom = webContents.getZoomFactor();
-    webContents.setZoomFactor(currentZoom + 0.01);
-});
-
-ipcMain.on('zoom-out', (event) => {
-    const webContents = event.sender;
-    const currentZoom = webContents.getZoomFactor();
-    webContents.setZoomFactor(currentZoom - 0.01);
-});
-
-ipcMain.on('reset-zoom', (event) => {
-    const webContents = event.sender;
-    webContents.setZoomFactor(1);
 });
