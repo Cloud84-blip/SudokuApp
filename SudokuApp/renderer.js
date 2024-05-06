@@ -21,12 +21,10 @@ document.addEventListener('wheel', (event) => {
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        console.log(x, y);
-
         const deltaX = x * scaleAmount * (event.deltaY < 0 ? 1 : -1);
         const deltaY = y * scaleAmount * (event.deltaY < 0 ? 1 : -1);
 
-        content.style.transformOrigin = `${x}px ${y}px`;
+        // content.style.transformOrigin = `${x}px ${y}px`;
         content.style.transform = `scale(${scale}) translate(${deltaX}px, ${deltaY}px)`;
     }
 });
@@ -76,6 +74,25 @@ document.addEventListener('mouseup', (event) => {
 });
 
 
+document.addEventListener('contextmenu', (event)=>{
+    event.preventDefault();    
+    const content = document.getElementById('sudoku-grid');
+    
+    const scale = 1.1;
+    const scaleAmount = 0.1;
+
+    const rect = content.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const deltaX = x * scaleAmount * (event.deltaY < 0 ? 1 : -1);
+    const deltaY = y * scaleAmount * (event.deltaY < 0 ? 1 : -1);
+
+    // content.style.transformOrigin = `${x}px ${y}px`;
+    content.style.transform = `scale(${scale}) translate(${deltaX}px, ${deltaY}px)`;
+})
+
+
 
 
 
@@ -89,15 +106,19 @@ function createSudokuGrid(nb_cells = 81) {
     const gridElement = document.getElementById('sudoku-grid');
     gridElement.classList.add('grid-template');
     for (let i = 0; i < nb_cells; i++) {
+        
         const cell = document.createElement('div');
         cell.className = 'sudoku-cell';
         const row_size = Math.floor(Math.sqrt(nb_cells));
-
+        console.log(i);
+        console.log(i % Math.floor(Math.sqrt(row_size)));
+        
         if ((i % (row_size * Math.floor(Math.sqrt(row_size)))) >= (row_size * Math.floor(Math.sqrt(row_size))) - row_size) {
             cell.classList.add('bold-bottom-border');
         }
         if (i % Math.floor(Math.sqrt(row_size)) === Math.floor(Math.sqrt(row_size)) - 1) {
             cell.classList.add('bold-right-border');
+            cell.classList.add('bigRed');
         }
 
         const input = document.createElement('input');
@@ -114,7 +135,7 @@ function createSudokuGrid(nb_cells = 81) {
     }
     const style = document.getElementById('style-head');
     style.innerHTML = `.grid-template {display: grid;
-        gap: 1px; grid-template-columns: repeat(${Math.floor(Math.sqrt(nb_cells))}, 50px); }`;
+        gap: 1px; grid-template-columns: repeat(${Math.floor(Math.sqrt(nb_cells))}, 20px); }`;
 }
 
 /*

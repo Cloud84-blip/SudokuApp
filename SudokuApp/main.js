@@ -2,19 +2,13 @@ const { app, BrowserWindow, ipcMain, } = require('electron');
 require('electron-reload')(__dirname, {
     electron: require(`${__dirname}/node_modules/electron`)
 });
-
-
-
 let sudoku_file;
-
 let win;
-
-const zoom = .5;
 
 function createWindow() {
     win = new BrowserWindow({
-        width: 470,
-        height: 520,
+        width: 700,
+        height: 820,
         webPreferences: {
             preload: __dirname + '/preload.js',
             contextIsolation: true,
