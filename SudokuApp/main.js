@@ -55,7 +55,7 @@ ipcMain.handle('loadFileAsync', async() => {
     const worker = new Worker(__dirname + '/worker.js', { workerData: result.filePaths[0] });
     worker.on('message', (data) => {
         sudoku_file += data;
-        if (!first_line) {
+        if (!first_line && !data.includes("=")) {
             eventEmitter.emit('first-line', data);
             first_line = true;
         }

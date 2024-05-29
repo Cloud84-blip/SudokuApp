@@ -17,9 +17,11 @@
 }
 
 #sudoku-grid {
-    transition: .6s ease;
+    transition: .6s ease; 
     background-color: white;
     position: relative;
+    top: 10rem;
+    left: 10rem;
 }
 
 .sudoku-cell {
@@ -100,4 +102,10 @@
 
 .number-grid div:hover {
     background-color: #ddd;
+}
+
+
+
+.debug {
+    background-color: green;
 }

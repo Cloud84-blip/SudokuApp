@@ -105,35 +105,105 @@ let solution;
 function createSudokuGrid(nb_cells = 81) {
     const gridElement = document.getElementById('sudoku-grid');
     gridElement.classList.add('grid-template');
-    for (let i = 0; i < nb_cells; i++) {
+    const row_size = Math.sqrt(nb_cells);
+    const subgrid_size = Math.sqrt(row_size);
 
+    for (let i = 0; i < nb_cells; i++) {
         const cell = document.createElement('div');
         cell.className = 'sudoku-cell';
-        const row_size = Math.floor(Math.sqrt(nb_cells));
 
-        if ((i % (row_size * Math.floor(Math.sqrt(row_size)))) >= (row_size * Math.floor(Math.sqrt(row_size))) - row_size) {
+        // Determine the subgrid index
+        const subgrid_row = Math.floor(Math.floor(i / row_size) / subgrid_size);
+        const subgrid_col = Math.floor((i % row_size) / subgrid_size);
+        const subgrid_index = subgrid_row * subgrid_size + subgrid_col;
+        
+        cell.classList.add(`subgrid-${subgrid_index}`);
+        
+        cell.addEventListener('mouseover', () => {
+            document.querySelectorAll(`.subgrid-${subgrid_index}`).forEach(subgridCell => {
+                subgridCell.classList.add('hovered-subgrid');
+            });
+        });
+
+        cell.addEventListener('mouseout', () => {
+            document.querySelectorAll(`.subgrid-${subgrid_index}`).forEach(subgridCell => {
+                subgridCell.classList.remove('hovered-subgrid');
+            });
+        });
+
+        cell.addEventListener('click', () => {
+            const zoomedCellIndex = subgrid_index;
+            const row = Math.floor(zoomedCellIndex / subgrid_size) * subgrid_size;
+            const col = (zoomedCellIndex % subgrid_size) * subgrid_size;
+
+            const cellWidth = 20;
+            const cellHeight = 20;
+            const scale = 2;
+
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            const translateX = centerX - (col * cellWidth + (cellWidth * subgrid_size) / 2) * scale;
+            const translateY = centerY - (row * cellHeight + (cellHeight * subgrid_size) / 2) * scale;
+
+            gridElement.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+        });
+
+        // Add bold borders for subgrid boundaries
+        if (Math.floor(i / row_size) % subgrid_size === subgrid_size - 1) {
             cell.classList.add('bold-bottom-border');
         }
-        if (i % Math.floor(Math.sqrt(row_size)) === Math.floor(Math.sqrt(row_size)) - 1) {
+        if (i % row_size % subgrid_size === subgrid_size - 1) {
             cell.classList.add('bold-right-border');
-            cell.classList.add('bigRed');
         }
 
-        // const input = document.createElement('input');
-        // input.type = 'text';
-        // input.className = "input-cells";
-        // //input.maxLength = 1;
-        // input.oninput = function() {
-        //     this.value = this.value.replace(/[^1-9]+/g, '');
-        // };
-
-        // cell.appendChild(input);
         gridElement.appendChild(cell);
-
     }
-    document.getElementById('style-head').innerHTML = `.grid-template {display: grid;
-        gap: 1px; grid-template-columns: repeat(${Math.floor(Math.sqrt(nb_cells))}, 20px); }`;
+
+    document.getElementById('style-head').innerHTML = `
+        .grid-template {
+            display: grid;
+            gap: 1px;
+            grid-template-columns: repeat(${row_size}, 20px);
+            transition: transform 0.3s ease-in-out;
+            transform-origin: 0 0; /* Set the transform origin to the top-left corner */
+        }
+        .sudoku-cell {
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .input-cells {
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            border: none;
+        }
+        .bold-bottom-border {
+            border-bottom: 2px solid black;
+        }
+        .bold-right-border {
+            border-right: 2px solid black;
+        }
+        .hovered-subgrid {
+            background-color: lightblue;
+        }
+    `;
 }
+
+
+// Add a button to reset the zoom
+const resetButton = document.createElement('button');
+resetButton.innerText = 'Reset Zoom';
+resetButton.addEventListener('click', () => {
+    document.getElementById('sudoku-grid').style.transform = 'scale(1) translate(0, 0)';
+});
+document.body.appendChild(resetButton);
+
+
+
+
 
 /*
  * Load the sudoku file
@@ -187,6 +257,8 @@ window.electronAPI.onFileLoaded((sudoku) => {
     //     cells[index].children[0].readOnly = true;
     // });
 });
+
+window.electronAPI.listenFirstLine();
 
 /*
  * Verify if the sudoku is complete

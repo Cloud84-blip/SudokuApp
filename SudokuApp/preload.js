@@ -15,20 +15,20 @@ contextBridge.exposeInMainWorld('electronAPI', {
         });
     },
 
+    
+    listenFileLoaded: () => {
+        ipcRenderer.send('listen-file-loaded');
+    },
+    
+    listenFirstLine: () => {
+        ipcRenderer.send('first-line');
+    },
+    
     onFirstLineLoaded: (callback) => {
         ipcRenderer.on('first-line', (event, line) => {
             callback(line);
         });
     },
-
-    listenFileLoaded: () => {
-        ipcRenderer.send('listen-file-loaded');
-    },
-
-    listenFirstLine: () => {
-        ipcRenderer.send('first-line');
-    },
-
     zoomIn: () => ipcRenderer.send('zoom-in'),
     zoomOut: () => ipcRenderer.send('zoom-out'),
     resetZoom: () => ipcRenderer.send('reset-zoom'),
