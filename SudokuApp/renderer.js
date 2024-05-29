@@ -6,10 +6,10 @@ document.addEventListener('wheel', (event) => {
     if (event.ctrlKey) {
         // event.preventDefault();  
 
-        const scaleAmount = 0.1;  
+        const scaleAmount = 0.1;
         const content = document.getElementById('sudoku-grid');
         let scale = parseFloat(content.style.transform.replace(/[^0-9.]/g, '')) || 1;
-        
+
         if (event.deltaY < 0) {
             scale += scaleAmount;
         } else {
@@ -31,14 +31,14 @@ document.addEventListener('wheel', (event) => {
 
 document.addEventListener('keydown', (event) => {
     if (event.code === 'Space') {
-        event.preventDefault(); 
+        event.preventDefault();
         document.body.style.cursor = 'grab';
     }
 });
 
 document.addEventListener('keyup', (event) => {
     if (event.code === 'Space') {
-        document.body.style.cursor = ''; 
+        document.body.style.cursor = '';
     }
 });
 
@@ -74,10 +74,10 @@ document.addEventListener('mouseup', (event) => {
 });
 
 
-document.addEventListener('contextmenu', (event)=>{
-    event.preventDefault();    
+document.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
     const content = document.getElementById('sudoku-grid');
-    
+
     const scale = 1.1;
     const scaleAmount = 0.1;
 
@@ -106,13 +106,11 @@ function createSudokuGrid(nb_cells = 81) {
     const gridElement = document.getElementById('sudoku-grid');
     gridElement.classList.add('grid-template');
     for (let i = 0; i < nb_cells; i++) {
-        
+
         const cell = document.createElement('div');
         cell.className = 'sudoku-cell';
         const row_size = Math.floor(Math.sqrt(nb_cells));
-        console.log(i);
-        console.log(i % Math.floor(Math.sqrt(row_size)));
-        
+
         if ((i % (row_size * Math.floor(Math.sqrt(row_size)))) >= (row_size * Math.floor(Math.sqrt(row_size))) - row_size) {
             cell.classList.add('bold-bottom-border');
         }
@@ -121,20 +119,19 @@ function createSudokuGrid(nb_cells = 81) {
             cell.classList.add('bigRed');
         }
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.className = "input-cells";
-        //input.maxLength = 1;
-        input.oninput = function() {
-            this.value = this.value.replace(/[^1-9]+/g, '');
-        };
+        // const input = document.createElement('input');
+        // input.type = 'text';
+        // input.className = "input-cells";
+        // //input.maxLength = 1;
+        // input.oninput = function() {
+        //     this.value = this.value.replace(/[^1-9]+/g, '');
+        // };
 
-        cell.appendChild(input);
+        // cell.appendChild(input);
         gridElement.appendChild(cell);
 
     }
-    const style = document.getElementById('style-head');
-    style.innerHTML = `.grid-template {display: grid;
+    document.getElementById('style-head').innerHTML = `.grid-template {display: grid;
         gap: 1px; grid-template-columns: repeat(${Math.floor(Math.sqrt(nb_cells))}, 20px); }`;
 }
 
@@ -146,7 +143,7 @@ function createSudokuGrid(nb_cells = 81) {
 function loadFile() {
     const data = window.electronAPI.loadFile();
     data.then((sudoku) => {
-        const nb_of_cells = sudoku.split('==================')[2].split(' ').length -1;
+        const nb_of_cells = sudoku.split('==================')[2].split(' ').length - 1;
         console.log(nb_of_cells);
         createSudokuGrid(nb_of_cells);
         const cells = document.getElementsByClassName('sudoku-cell');
@@ -167,6 +164,29 @@ function loadFile() {
         });
     });
 }
+
+window.electronAPI.loadFileAsync();
+window.electronAPI.listenFileLoaded();
+window.electronAPI.onFileLoaded((sudoku) => {
+    console.log('----> File loaded <---');
+    const nb_of_cells = sudoku.split('==================')[2].split(' ').length - 1;
+    createSudokuGrid(nb_of_cells);
+    // const cells = document.getElementsByClassName('sudoku-cell');
+    // solution = sudoku.split('==================')[1];
+    // sudoku.split('==================')[2].split(' ').forEach((value, index) => {
+    //     if (value.includes('\n')) {
+    //         value = value.replace('\n', '');
+    //     }
+    //     if (value === 'X') {
+    //         cells[index].addEventListener('click', function(event) {
+    //             document.getElementById('numberPopup').style.display = 'block';
+    //             generateNumbers(event.target, index, nb_of_cells);
+    //         });
+    //     }
+    //     cells[index].children[0].value = (value === 'X') ? ' ' : value;
+    //     cells[index].children[0].readOnly = true;
+    // });
+});
 
 /*
  * Verify if the sudoku is complete
@@ -251,7 +271,11 @@ function verifySudoku() {
     }
 }
 
-loadFile();
+/*
+ * Load the sudoku file
+ * @return {void}
+ */
+// loadFile();
 
 
 /*
