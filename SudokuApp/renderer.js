@@ -2,6 +2,36 @@ document.getElementById('checkValidity').addEventListener('click', () => {
     verifySudoku();
 });
 
+
+
+document.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+    const content = document.getElementById('sudoku-grid');
+
+    const scale = 1.1;
+    const scaleAmount = 0.1;
+
+    const rect = content.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const deltaX = x * scaleAmount * (event.deltaY < 0 ? 1 : -1);
+    const deltaY = y * scaleAmount * (event.deltaY < 0 ? 1 : -1);
+
+    // content.style.transformOrigin = `${x}px ${y}px`;
+    content.style.transform = `scale(${scale}) translate(${deltaX}px, ${deltaY}px)`;
+})
+
+
+
+
+
+let solution;
+/*  
+ * Create the sudoku grid
+ * @return {void}
+ */
+
 document.addEventListener('wheel', (event) => {
     if (event.ctrlKey) {
         // event.preventDefault();  
@@ -74,34 +104,6 @@ document.addEventListener('mouseup', (event) => {
 });
 
 
-document.addEventListener('contextmenu', (event) => {
-    event.preventDefault();
-    const content = document.getElementById('sudoku-grid');
-
-    const scale = 1.1;
-    const scaleAmount = 0.1;
-
-    const rect = content.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    const deltaX = x * scaleAmount * (event.deltaY < 0 ? 1 : -1);
-    const deltaY = y * scaleAmount * (event.deltaY < 0 ? 1 : -1);
-
-    // content.style.transformOrigin = `${x}px ${y}px`;
-    content.style.transform = `scale(${scale}) translate(${deltaX}px, ${deltaY}px)`;
-})
-
-
-
-
-
-let solution;
-/*  
- * Create the sudoku grid
- * @return {void}
- */
-
 function createSudokuGrid(nb_cells = 81) {
     const gridElement = document.getElementById('sudoku-grid');
     gridElement.classList.add('grid-template');
@@ -116,9 +118,9 @@ function createSudokuGrid(nb_cells = 81) {
         const subgrid_row = Math.floor(Math.floor(i / row_size) / subgrid_size);
         const subgrid_col = Math.floor((i % row_size) / subgrid_size);
         const subgrid_index = subgrid_row * subgrid_size + subgrid_col;
-        
+
         cell.classList.add(`subgrid-${subgrid_index}`);
-        
+
         cell.addEventListener('mouseover', () => {
             document.querySelectorAll(`.subgrid-${subgrid_index}`).forEach(subgridCell => {
                 subgridCell.classList.add('hovered-subgrid');
@@ -140,13 +142,10 @@ function createSudokuGrid(nb_cells = 81) {
             const cellHeight = 20;
             const scale = 2;
 
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
+            const translateX = -col * cellWidth + (window.innerWidth / 2 - cellWidth * subgrid_size / 2);
+            const translateY = -row * cellHeight + (window.innerHeight / 2 - cellHeight * subgrid_size / 2);
 
-            const translateX = centerX - (col * cellWidth + (cellWidth * subgrid_size) / 2) * scale;
-            const translateY = centerY - (row * cellHeight + (cellHeight * subgrid_size) / 2) * scale;
-
-            gridElement.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+            gridElement.style.transform = `scale(${scale}) translate(${translateX / scale}px, ${translateY / scale}px)`;
         });
 
         // Add bold borders for subgrid boundaries
@@ -161,6 +160,10 @@ function createSudokuGrid(nb_cells = 81) {
     }
 
     document.getElementById('style-head').innerHTML = `
+        .grid-container {
+            /*overflow: auto; /* Enable scrolling */
+            position: relative;
+        }
         .grid-template {
             display: grid;
             gap: 1px;
@@ -174,11 +177,9 @@ function createSudokuGrid(nb_cells = 81) {
             justify-content: center;
             align-items: center;
         }
-        .input-cells {
-            width: 20px;
-            height: 20px;
-            text-align: center;
-            border: none;
+
+        .sudoku-cell :hover {
+            cursor: zoom-in;
         }
         .bold-bottom-border {
             border-bottom: 2px solid black;
@@ -192,73 +193,59 @@ function createSudokuGrid(nb_cells = 81) {
     `;
 }
 
-
 // Add a button to reset the zoom
 const resetButton = document.createElement('button');
 resetButton.innerText = 'Reset Zoom';
+resetButton.classList.add('button');
 resetButton.addEventListener('click', () => {
-    document.getElementById('sudoku-grid').style.transform = 'scale(1) translate(0, 0)';
+    const gridElement = document.getElementById('sudoku-grid');
+    gridElement.style.transform = 'scale(0.8) translate(0, 0)';
 });
-document.body.appendChild(resetButton);
+document.getElementById('button-container').appendChild(resetButton);
+
+// Create a container for the grid and append it to the body
+const gridContainer = document.createElement('div');
+gridContainer.className = 'grid-container';
+gridContainer.appendChild(document.getElementById('sudoku-grid'));
+document.getElementById('container').appendChild(gridContainer);
 
 
 
-
-
-/*
- * Load the sudoku file
- * @return {void}
- */
-
-function loadFile() {
-    const data = window.electronAPI.loadFile();
-    data.then((sudoku) => {
-        const nb_of_cells = sudoku.split('==================')[2].split(' ').length - 1;
-        console.log(nb_of_cells);
-        createSudokuGrid(nb_of_cells);
-        const cells = document.getElementsByClassName('sudoku-cell');
-        solution = sudoku.split('==================')[1];
-        sudoku.split('==================')[2].split(' ').forEach((value, index) => {
-            if (value.includes('\n')) {
-                value = value.replace('\n', '');
-            }
-            if (value === 'X') {
-                cells[index].addEventListener('click', function(event) {
-                    document.getElementById('numberPopup').style.display = 'block';
-                    generateNumbers(event.target, index, nb_of_cells);
-                });
-            }
-            cells[index].children[0].value = (value === 'X') ? ' ' : value;
-            cells[index].children[0].readOnly = true;
-
-        });
-    });
-}
 
 window.electronAPI.loadFileAsync();
+
+
+window.electronAPI.listenFirstLine();
+window.electronAPI.onFirstLineLoaded((line) => {
+    const nb_of_cells = Math.floor(Math.pow(parseInt(line) - 1, 2));
+    createSudokuGrid(nb_of_cells);
+});
+
 window.electronAPI.listenFileLoaded();
 window.electronAPI.onFileLoaded((sudoku) => {
     console.log('----> File loaded <---');
-    const nb_of_cells = sudoku.split('==================')[2].split(' ').length - 1;
-    createSudokuGrid(nb_of_cells);
-    // const cells = document.getElementsByClassName('sudoku-cell');
-    // solution = sudoku.split('==================')[1];
-    // sudoku.split('==================')[2].split(' ').forEach((value, index) => {
-    //     if (value.includes('\n')) {
-    //         value = value.replace('\n', '');
-    //     }
-    //     if (value === 'X') {
-    //         cells[index].addEventListener('click', function(event) {
-    //             document.getElementById('numberPopup').style.display = 'block';
-    //             generateNumbers(event.target, index, nb_of_cells);
-    //         });
-    //     }
-    //     cells[index].children[0].value = (value === 'X') ? ' ' : value;
-    //     cells[index].children[0].readOnly = true;
-    // });
+
+    const cells = document.getElementsByClassName('sudoku-cell');
+    sudoku.split(' ').forEach((value, index) => {
+        if (value.includes('\n')) {
+            value = value.replace('\n', '');
+        }
+        if (value.includes("undefined")) {
+            value = value.replace("undefined", "");
+        }
+        if (value === 'X') {
+            cells[index].addEventListener('click', function(event) {
+                document.getElementById('numberPopup').style.display = 'block';
+                generateNumbers(event.target, index, nb_of_cells);
+            });
+        }
+        cells[index].appendChild(document.createElement('a'));
+        cells[index].children[0].innerHTML = (value === 'X') ? ' ' : value;
+        cells[index].children[0].readOnly = true;
+
+    });
 });
 
-window.electronAPI.listenFirstLine();
 
 /*
  * Verify if the sudoku is complete
@@ -342,12 +329,6 @@ function verifySudoku() {
         alert('Sudoku is not complete');
     }
 }
-
-/*
- * Load the sudoku file
- * @return {void}
- */
-// loadFile();
 
 
 /*

@@ -12,16 +12,20 @@
 </head>
 
 <body>
-    <div id="sudoku-grid" class="grid-template"></div>
-    <div id="numberPopup" class="popup">
-        <div class="popup-content">
-            <span class="close-btn">&times;</span>
-            <div class="number-grid">
+    <div id="container">
+        <div id="sudoku-grid" class="grid-template"></div>
+        <div id="numberPopup" class="popup">
+            <div class="popup-content">
+                <span class="close-btn">&times;</span>
+                <div class="number-grid">
+                </div>
             </div>
         </div>
+        <div id="button-container">
+            <button id="checkValidity" class="button">Check Validity</button>
+        </div>
+        <script src="renderer.js"></script>
     </div>
-    <button id="checkValidity">Check Validity</button>
-    <script src="renderer.js"></script>
 </body>
 
 </html>

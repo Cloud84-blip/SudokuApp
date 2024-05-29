@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     },
     
     listenFirstLine: () => {
-        ipcRenderer.send('first-line');
+        ipcRenderer.send('listen-first-line');
     },
     
     onFirstLineLoaded: (callback) => {

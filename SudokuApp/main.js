@@ -52,17 +52,20 @@ ipcMain.handle('loadFileAsync', async() => {
     });
     let sudoku_file;
 
-    const worker = new Worker(__dirname + '/worker.js', { workerData: result.filePaths[0] });
+    const worker = new Worker(__dirname + '/worker.js', { workerData: { path: result.filePaths[0], firstLineOnly: true } });
     worker.on('message', (data) => {
-        sudoku_file += data;
-        if (!first_line && !data.includes("=")) {
+        if (!first_line) {
+            console.log(data)
             eventEmitter.emit('first-line', data);
             first_line = true;
+        } else {
+            sudoku_file += data;
+            eventEmitter.emit('file-loaded', sudoku_file);
         }
     });
 
     worker.on('exit', () => {
-        eventEmitter.emit('file-loaded', sudoku_file);
+        console.log('Worker thread exited');
     });
 });
 
