@@ -101,6 +101,8 @@ resetButton.innerText = 'Reset Zoom';
 resetButton.classList.add('button');
 resetButton.addEventListener('click', () => {
     const gridElement = document.getElementById('sudoku-grid');
-    gridElement.style.transform = 'scale(1) translate(0, 0)';
+    gridElement.style.transform = 'scale(0.3) translate(0, 15vh)';
+    document.getElementById('grid-container').scrollTo({top: 0, left:0, behavior: 'smooth'});
+    window.scrollTo({top: 0, behavior: 'smooth'});
 });
 document.getElementById('button-container').appendChild(resetButton);

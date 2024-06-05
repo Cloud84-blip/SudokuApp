@@ -1,4 +1,4 @@
-function createSudokuGrid(nb_cells = 81) {
+function createSudokuGrid(nb_cells = 81, initialScale = 0.3) {
     const gridElement = document.getElementById('sudoku-grid');
     gridElement.classList.add('grid-template');
     const row_size = Math.sqrt(nb_cells);
@@ -30,21 +30,44 @@ function createSudokuGrid(nb_cells = 81) {
         });
 
         cell.addEventListener('click', () => {
-            const zoomedCellIndex = subgrid_index;
-            const row = Math.floor(zoomedCellIndex / subgrid_size) * subgrid_size;
-            const col = (zoomedCellIndex % subgrid_size) * subgrid_size;
 
-            const cellWidth = 20;
-            const cellHeight = 20;
-            const scale = 2;
+            const scale = 0.8;
 
-            const centerX = (col + subgrid_size / 2) * cellWidth;
-            const centerY = (row + subgrid_size / 2) * cellHeight;
+            // Capture mouse position
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
 
-            const translateX = window.innerWidth / 2 - centerX * scale + (cellWidth * Math.floor(Math.sqrt(subgrid_size)));
-            const translateY = window.innerHeight / 2 - centerY * scale + (cellHeight * Math.floor(Math.sqrt(subgrid_size)));
+            let translateX;
+            let translateY;
 
-            gridElement.style.transform = `scale(${scale}) translate(${translateX / scale}px, ${translateY / scale}px)`;
+            // console.log(`${subgrid_index} < ${Math.floor(Math.sqrt(row_size))} ? ${ subgrid_index < Math.floor(Math.sqrt(row_size)) } `);
+            // console.log(`${ subgrid_index >= 0 && subgrid_index < Math.floor(Math.sqrt(row_size))  } `);
+            // if (subgrid_index >= Math.floor(Math.sqrt(row_size)) * 2 && subgrid_index < Math.floor(Math.sqrt(row_size)) * 4)
+            console.log(`${subgrid_index % Math.floor(Math.sqrt(row_size))}`)
+            if (subgrid_index >= 0 && subgrid_index < Math.floor(Math.sqrt(row_size)) * 2) {
+                // first row of subgrid
+                // Calculate translation
+                console.log('Y + 500');
+                translateX = (window.innerWidth / 2 - mouseX) / scale;
+                translateY = (window.innerHeight / 2 - mouseY) / scale + 500;
+            } else if (subgrid_index >= Math.floor(Math.sqrt(row_size)) * 2 && subgrid_index < Math.floor(Math.sqrt(row_size)) * 4) {
+                console.log('Y + 200');
+                translateX = (window.innerWidth / 2 - mouseX) / scale;
+                translateY = (window.innerHeight / 2 - mouseY) / scale + 200;
+            }  else  {
+                console.log('Y - 200');
+                translateX = (window.innerWidth / 2 - mouseX) / scale;
+                translateY = (window.innerHeight / 2 - mouseY) / scale - 200;
+            }
+
+            if(subgrid_index % Math.floor(Math.sqrt(row_size)) === 7) {
+                translateX -= 200;
+            } else if (subgrid_index % Math.floor(Math.sqrt(row_size)) === 0) {
+                translateX += 200;
+            }
+
+
+            gridElement.style.transform = `scale(0.8) translate(${translateX}px, ${translateY}px)`;
         });
 
         // Add bold borders for subgrid boundaries
@@ -60,6 +83,9 @@ function createSudokuGrid(nb_cells = 81) {
 
     gridElement.appendChild(fragment);
 
+    // Set initial zoom
+    gridElement.style.transform = `scale(${initialScale}) translateY(15vh)`;
+
     document.getElementById('style-head').innerHTML = `
         .grid-container {
             overflow: auto; /* Enable scrolling */
@@ -70,7 +96,7 @@ function createSudokuGrid(nb_cells = 81) {
             gap: 1px;
             grid-template-columns: repeat(${row_size}, 20px);
             transition: transform 0.3s ease-in-out;
-            transform-origin: 0 0; /* Set the transform origin to the top-left corner */
+            top: 0;
         }
         .sudoku-cell {
             border: 1px solid #ccc;
@@ -122,8 +148,9 @@ window.electronAPI.onFileLoaded((sudoku) => {
 
     const cells = document.getElementsByClassName('sudoku-cell');
     sudoku.split(' ').forEach((value, index) => {
+        console.log(value, value.length);
         value = value.replace(/\n/g, '').replace("undefined", "");
-
+        
         if (value === 'X') {
             cells[index].addEventListener('click', function(event) {
                 document.getElementById('numberPopup').style.display = 'block';

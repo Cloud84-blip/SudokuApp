@@ -67,6 +67,18 @@ ipcMain.handle('loadFileAsync', async() => {
     worker.on('exit', () => {
         console.log('Worker thread exited');
     });
+
+
+    const worker_2 = new Worker(__dirname + "/worker.js", { workerData: { path: result.filePaths[0], firstLineOnly: false } });
+
+    worker_2.on('message', (data) => {
+        sudoku_file += data;
+    });
+    
+    worker_2.on('exit', () => {
+        console.log('Worker_2 thread exited');
+        eventEmitter.emit('file-loaded', sudoku_file);
+    });
 });
 
 ipcMain.on('listen-file-loaded', (event) => {

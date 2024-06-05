@@ -4,23 +4,23 @@
     display: flex;
     position: fixed;
     justify-content: center;
-    margin-left: 4rem;
-    max-width: 5rem;
-    max-height: 4rem;
+    max-width: 4rem;
+    max-height: 3rem;
     z-index: 1;
 }
 
 .button {
     display: inline-block;
-    padding: 10px 20px;
     margin: 10px 0;
     cursor: pointer;
     background: #3498db;
+    opacity: 60%;
     color: #fff;
     border: none;
     border-radius: 5px;
     position: relative;
     transition: all 0.5s;
+    font-size: 5px;
 }
 
 .button:hover {
@@ -42,7 +42,8 @@
     align-items: center;
     position: relative;
     overflow: scroll;
-    /* max-height: 98vh; */
+    max-height: 97vh;
+    max-width: 98vw;
 }
 
 #sudoku-grid {

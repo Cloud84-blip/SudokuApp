@@ -20,6 +20,7 @@ rl.on('line', (line) => {
     }
     if (!line.includes("=")) {
         data += line;
+        console.log(line)
     }
 });
 
