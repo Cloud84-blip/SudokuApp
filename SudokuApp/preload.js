@@ -1,9 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+
 contextBridge.exposeInMainWorld('electronAPI', {
-    loadFile: () => {
-        return ipcRenderer.invoke('loadFile');
-    },
 
     loadFileAsync: () => {
         return ipcRenderer.invoke('loadFileAsync');
@@ -20,17 +18,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
         ipcRenderer.send('listen-file-loaded');
     },
     
-    listenFirstLine: () => {
-        ipcRenderer.send('listen-first-line');
-    },
-    
-    onFirstLineLoaded: (callback) => {
-        ipcRenderer.on('first-line', (event, line) => {
-            callback(line);
-        });
-    },
-    zoomIn: () => ipcRenderer.send('zoom-in'),
-    zoomOut: () => ipcRenderer.send('zoom-out'),
-    resetZoom: () => ipcRenderer.send('reset-zoom'),
-    getZoomFactor: () => webFrame.getZoomFactor()
 });
