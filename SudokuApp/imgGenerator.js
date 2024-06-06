@@ -1,85 +1,64 @@
 const fs = require('fs');
-const { createCanvas } = require('canvas');
+const sharp = require('sharp');
 
-class ImgGenerator {
-    path;
-    fileContent;
-    sudokuGrid;
-    gridSize;
-    subgridSize;
-    cellSize;
-    canvasSize;
-    canvas;
-    ctx;
-    constructor(path){
-        this.path = path;
-        this.loadFile();
-        this.init();
-    }
-
-    loadFile(){
-        this.fileContent = fs.readFileSync(this.path, 'utf-8');
-    }
-
-    init(){
-        this.sudokuGrid = fileContent.trim().split(/\s+/).map(Number);
-        this.gridSize =  Math.sqrt(sudokuGrid.length);
+class SudokuImageGenerator {
+    constructor(filePath, outputFileName) {
+        this.filePath = filePath;
+        this.outputFileName = outputFileName;
+        this.fileContent = fs.readFileSync(this.filePath, 'utf-8');
+        this.sudokuGrid = this.fileContent.trim().split(/\s+/).map(Number);
+        this.gridSize = Math.sqrt(this.sudokuGrid.length);
         this.subgridSize = Math.sqrt(this.gridSize);
         this.cellSize = 50;
         this.canvasSize = this.gridSize * this.cellSize;
-        this.canvas = createCanvas(this.canvasSize, this.canvasSize);
-        this.ctx = this.canvas.getContext('2d');
+        this.svgHeader = `<svg width="${this.canvasSize}" height="${this.canvasSize}" xmlns="http://www.w3.org/2000/svg">`;
+        this.svgFooter = `</svg>`;
+        this.svgContent = '';
     }
 
     drawGrid() {
-        this.ctx.strokeStyle = '#000';
         for (let i = 0; i <= this.gridSize; i++) {
-            const lineWidth = (i % this.subgridSize === 0) ? 2 : 1;
-            this.ctx.lineWidth = lineWidth;
-    
-            // horizontal lines
-            this.ctx.beginPath();
-            this.ctx.moveTo(0, i * this.cellSize);
-            this.ctx.lineTo(this.canvasSize, i * this.cellSize);
-            this.ctx.stroke();
-    
-            // Vertical lines
-            this.ctx.beginPath();
-            this.ctx.moveTo(i * this.cellSize, 0);
-            this.ctx.lineTo(i * this.cellSize, this.canvasSize);
-            this.ctx.stroke();
+            const strokeWidth = (i % this.subgridSize === 0) ? 2 : 1;
+            const color = "#000";
+
+            // Lignes horizontales
+            this.svgContent += `<line x1="0" y1="${i * this.cellSize}" x2="${this.canvasSize}" y2="${i * this.cellSize}" stroke="${color}" stroke-width="${strokeWidth}"/>`;
+
+            // Lignes verticales
+            this.svgContent += `<line x1="${i * this.cellSize}" y1="0" x2="${i * this.cellSize}" y2="${this.canvasSize}" stroke="${color}" stroke-width="${strokeWidth}"/>`;
         }
     }
 
     drawNumbers() {
-        this.ctx.font = '24px Arial';
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
+        const fontSize = 24;
+        const fontColor = "#000";
         for (let i = 0; i < this.gridSize; i++) {
             for (let j = 0; j < this.gridSize; j++) {
                 const number = this.sudokuGrid[i * this.gridSize + j];
                 if (number !== 0) {
                     const x = j * this.cellSize + this.cellSize / 2;
-                    const y = i * this.cellSize + this.cellSize / 2;
-                    this.ctx.fillText(number, x, y);
+                    const y = i * this.cellSize + this.cellSize / 2 + fontSize / 3; // Ajuster pour centrer verticalement
+                    this.svgContent += `<text x="${x}" y="${y}" font-size="${fontSize}" fill="${fontColor}" text-anchor="middle" dominant-baseline="middle">${number}</text>`;
                 }
             }
         }
     }
 
-    generate(){
-        const out = fs.createWriteStream('sudoku.png');
-        const stream = canvas.createPNGStream();
-        stream.pipe(out);
-        out.on('finish', () => console.log('Sudoku image was created'));
+    generateImage() {
+        this.drawGrid();
+        this.drawNumbers();
+
+        const svg = this.svgHeader + this.svgContent + this.svgFooter;
+
+        sharp(Buffer.from(svg))
+            .toFile(this.outputFileName, (err, info) => {
+                if (err) {
+                    console.error('Erreur lors de la génération de l\'image:', err);
+                } else {
+                    console.log('L\'image Sudoku a été créée:', info);
+                }
+            });
     }
 }
 
-
-
-module.exports = ImgGenerator;
-
-drawGrid();
-drawNumbers();
-
-
+module.exports = SudokuImageGenerator;

@@ -40,6 +40,7 @@
     },
     "dependencies": {
         "canvas": "^2.11.2",
-        "electron-reload": "^2.0.0-alpha.1"
+        "electron-reload": "^2.0.0-alpha.1",
+        "sharp": "^0.33.4"
     }
 }

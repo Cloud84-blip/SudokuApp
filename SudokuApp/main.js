@@ -42,20 +42,17 @@ ipcMain.handle('loadFile', async() => {
 
 ipcMain.handle('loadFileAsync', async() => {
     const { dialog } = require('electron');
-    const ImgGenerator = require("./imgGenerator");
+    const SudokuImageGenerator = require("./imgGenerator");
     const result = await dialog.showOpenDialog({
         properties: ['openFile'],
         filters: [
             { name: 'sudoku_complete', extensions: ['txt'] }
         ]
     });
-    const imgGenerator = new ImgGenerator(result.filePaths[0]);
-    imgGenerator.drawGrid();
-    imgGenerator.draNumbers();
-    imgGenerator.generate();
+    const imgGenerator = new SudokuImageGenerator(result.filePaths[0], 'sudoku.png');
+    imgGenerator.generateImage();
 
     eventEmitter.emit('file-loaded', "sudoku.png");
-
 });
 
 ipcMain.on('listen-file-loaded', (event) => {
