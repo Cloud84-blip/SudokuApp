@@ -1,4 +1,4 @@
-function createSudokuGrid(nb_cells = 81, initialScale = 0.3) {
+function createSudokuGrid(nb_cells = 81, initialScale = 0.6) {
     const gridElement = document.getElementById('sudoku-grid');
     gridElement.classList.add('grid-template');
     const row_size = Math.sqrt(nb_cells);
@@ -31,43 +31,39 @@ function createSudokuGrid(nb_cells = 81, initialScale = 0.3) {
 
         cell.addEventListener('click', () => {
 
-            const scale = 0.8;
+            // const scale = 0.8;
 
-            // Capture mouse position
-            const mouseX = event.clientX;
-            const mouseY = event.clientY;
+            // // Capture mouse position
+            // const mouseX = event.clientX;
+            // const mouseY = event.clientY;
 
-            let translateX;
-            let translateY;
+            // let translateX;
+            // let translateY;
 
-            // console.log(`${subgrid_index} < ${Math.floor(Math.sqrt(row_size))} ? ${ subgrid_index < Math.floor(Math.sqrt(row_size)) } `);
-            // console.log(`${ subgrid_index >= 0 && subgrid_index < Math.floor(Math.sqrt(row_size))  } `);
-            // if (subgrid_index >= Math.floor(Math.sqrt(row_size)) * 2 && subgrid_index < Math.floor(Math.sqrt(row_size)) * 4)
-            console.log(`${subgrid_index % Math.floor(Math.sqrt(row_size))}`)
-            if (subgrid_index >= 0 && subgrid_index < Math.floor(Math.sqrt(row_size)) * 2) {
-                // first row of subgrid
-                // Calculate translation
-                console.log('Y + 500');
-                translateX = (window.innerWidth / 2 - mouseX) / scale;
-                translateY = (window.innerHeight / 2 - mouseY) / scale + 500;
-            } else if (subgrid_index >= Math.floor(Math.sqrt(row_size)) * 2 && subgrid_index < Math.floor(Math.sqrt(row_size)) * 4) {
-                console.log('Y + 200');
-                translateX = (window.innerWidth / 2 - mouseX) / scale;
-                translateY = (window.innerHeight / 2 - mouseY) / scale + 200;
-            }  else  {
-                console.log('Y - 200');
-                translateX = (window.innerWidth / 2 - mouseX) / scale;
-                translateY = (window.innerHeight / 2 - mouseY) / scale - 200;
-            }
+            // if (subgrid_index >= 0 && subgrid_index < Math.floor(Math.sqrt(row_size)) * 2) {
+            //     // first row of subgrid
+            //     // Calculate translation
+            //     console.log('Y + 500');
+            //     translateX = (window.innerWidth / 2 - mouseX) / scale;
+            //     translateY = (window.innerHeight / 2 - mouseY) / scale + 500;
+            // } else if (subgrid_index >= Math.floor(Math.sqrt(row_size)) * 2 && subgrid_index < Math.floor(Math.sqrt(row_size)) * 4) {
+            //     console.log('Y + 200');
+            //     translateX = (window.innerWidth / 2 - mouseX) / scale;
+            //     translateY = (window.innerHeight / 2 - mouseY) / scale + 200;
+            // }  else  {
+            //     console.log('Y - 200');
+            //     translateX = (window.innerWidth / 2 - mouseX) / scale;
+            //     translateY = (window.innerHeight / 2 - mouseY) / scale - 200;
+            // }
 
-            if(subgrid_index % Math.floor(Math.sqrt(row_size)) === 7) {
-                translateX -= 200;
-            } else if (subgrid_index % Math.floor(Math.sqrt(row_size)) === 0) {
-                translateX += 200;
-            }
+            // if(subgrid_index % Math.floor(Math.sqrt(row_size)) === 7) {
+            //     translateX -= 200;
+            // } else if (subgrid_index % Math.floor(Math.sqrt(row_size)) === 0) {
+            //     translateX += 200;
+            // }
 
-
-            gridElement.style.transform = `scale(0.8) translate(${translateX}px, ${translateY}px)`;
+            // gridElement.style.transform = `scale(0.8) translate(${translateX}px, ${translateY}px)`;
+            document.getElementById('pan-view').zoom =+ 5
         });
 
         // Add bold borders for subgrid boundaries
@@ -84,19 +80,19 @@ function createSudokuGrid(nb_cells = 81, initialScale = 0.3) {
     gridElement.appendChild(fragment);
 
     // Set initial zoom
-    gridElement.style.transform = `scale(${initialScale}) translateY(15vh)`;
+    // gridElement.style.transform = `scale(${initialScale}) translate(0,0)`;
 
     document.getElementById('style-head').innerHTML = `
         .grid-container {
-            overflow: auto; /* Enable scrolling */
             position: relative;
         }
         .grid-template {
             display: grid;
-            gap: 1px;
-            grid-template-columns: repeat(${row_size}, 20px);
+            justify-content: center;
+            align-items: center;
+            gap: .2px;
+            grid-template-columns: repeat(${row_size}, 11px);
             transition: transform 0.3s ease-in-out;
-            top: 0;
         }
         .sudoku-cell {
             border: 1px solid #ccc;
@@ -107,7 +103,7 @@ function createSudokuGrid(nb_cells = 81, initialScale = 0.3) {
         }
 
         .sudoku-cell:hover {
-            cursor: zoom-in;
+            cursor: grab;
         }
         .bold-bottom-border {
             border-bottom: 2px solid black;
@@ -122,8 +118,9 @@ function createSudokuGrid(nb_cells = 81, initialScale = 0.3) {
 }
 
 // Create a container for the grid and append it to the body
-const gridContainer = document.getElementById('grid-container');
-gridContainer.appendChild(document.getElementById('sudoku-grid'));
+// const gridContainer = document.getElementById('grid-container');
+// gridContainer.appendChild(document.getElementById('sudoku-grid'));
+document.getElementById('pan-view').appendChild(document.getElementById("sudoku-grid"));
 
 /**
  * Load the sudoku file
@@ -148,7 +145,6 @@ window.electronAPI.onFileLoaded((sudoku) => {
 
     const cells = document.getElementsByClassName('sudoku-cell');
     sudoku.split(' ').forEach((value, index) => {
-        console.log(value, value.length);
         value = value.replace(/\n/g, '').replace("undefined", "");
         
         if (value === 'X') {
@@ -163,3 +159,4 @@ window.electronAPI.onFileLoaded((sudoku) => {
         cells[index].appendChild(anchor);
     });
 });
+

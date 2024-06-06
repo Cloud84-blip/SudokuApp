@@ -11,16 +11,17 @@ let firstLineRed = false;
 let data = '';
 
 rl.on('line', (line) => {
-    if (!firstLineRed && !line.includes("=")) {
-        parentPort.postMessage(line.split(" ").length);
-        firstLineRed = true;
-        if (workerData.firstLineOnly) {
-            rl.close();
+    if(workerData.firstLineOnly){
+        if (!firstLineRed && !line.includes("=")) {
+            parentPort.postMessage(line.split(" ").length);
+            firstLineRed = true;
+            if (workerData.firstLineOnly) {
+                rl.close();
+            }
         }
     }
     if (!line.includes("=")) {
         data += line;
-        console.log(line)
     }
 });
 

@@ -12,23 +12,22 @@
 </head>
 
 <body>
-    <div id="container">
-        <div id="grid-container">
-            <div id="sudoku-grid" class="grid-template"></div>
-        </div>
-        <div id="numberPopup" class="popup">
-            <div class="popup-content">
-                <span class="close-btn">&times;</span>
-                <div class="number-grid">
-                </div>
-            </div>
-        </div>
-        <div id="button-container">
-            <button id="checkValidity" class="button">Check Validity</button>
-        </div>
-        <script src="renderer.js"></script>
-        <script src="listener.js"></script>
-    </div>
+    <wc-pan-box id="pan-view" zoom="1" modifier-key="shift">
+        
+        <div id="sudoku-grid" class="grid-template"></div>
+    </wc-pan-box>
+    <script src="PanBox.js"></script>
+    <script src="renderer.js"></script>
+    <script src="listener.js"></script>
 </body>
 
 </html>
+
+<!-- <div id="container">
+            <div id="grid-container">
+                <div id="sudoku-grid" class="grid-template"></div>
+            </div>
+            <div id="button-container">
+                <button id="checkValidity" class="button">Check Validity</button>
+            </div>
+        </div> -->
