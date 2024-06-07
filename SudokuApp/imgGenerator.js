@@ -6,7 +6,7 @@ class SudokuImageGenerator {
         this.filePath = filePath;
         this.outputFileName = outputFileName;
         this.fileContent = fs.readFileSync(this.filePath, 'utf-8');
-        this.sudokuGrid = this.fileContent.trim().split(/\s+/).map(Number);
+        this.sudokuGrid = this.fileContent.trim().split(',').map(Number);
         this.gridSize = Math.sqrt(this.sudokuGrid.length);
         this.subgridSize = Math.sqrt(this.gridSize);
         this.cellSize = 50;

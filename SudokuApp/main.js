@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain, } = require('electron');
-
+const path = require('path');
 let win;
 
 function createWindow() {
@@ -20,9 +20,9 @@ function createWindow() {
 }
 
 
-app.on('ready', ()=>{
+app.on('ready', () => {
     createWindow();
-    ipcMain.handle('loadFileAsync', async (event) => {
+    ipcMain.handle('loadFileAsync', async(event) => {
         const { dialog } = require('electron');
         const SudokuImageGenerator = require("./imgGenerator");
         const result = await dialog.showOpenDialog({
@@ -31,7 +31,7 @@ app.on('ready', ()=>{
                 { name: 'sudoku_complete', extensions: ['txt'] }
             ]
         });
-    
+
         if (result.filePaths.length > 0) {
             const imgGenerator = new SudokuImageGenerator(result.filePaths[0], 'sudoku.png');
             try {
