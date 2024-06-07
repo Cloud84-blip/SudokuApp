@@ -1,11 +1,13 @@
 {
-    "name": "SudokuApp",
+    "name": "sudoku-app",
     "version": "1.0.0",
     "main": "main.js",
-    "author": "Chahan",
-    "license": "MIT",
+    "author": "Movsessian Chahan",
+    "license": "UNLICENSED",
     "scripts": {
-        "start": "electron ."
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder"
     },
     "devDependencies": {
         "electron": "^29.3.0",
@@ -16,30 +18,45 @@
         "appId": "sudoku.app.electron",
         "productName": "SudokuApp",
         "directories": {
-            "output": "dist"
+            "output": "dist",
+            "buildResources": "assets"
         },
         "files": [
             "dist/**/*",
             "node_modules/**/*",
             "index.html",
-            "index.js",
+            "main.js",
+            "imgGenerator.js",
+            "preload.js",
+            "renderer.js",
             "package.json"
         ],
         "win": {
+            "icon": "assets/icons/ico.ico",
             "target": "nsis"
         },
         "mac": {
+            "icon": "assets/icons/ico.icns",
             "target": "dmg"
         },
         "linux": {
+            "icon": "assets/icons/ico.png",
             "target": [
                 "AppImage",
                 "deb"
             ]
-        }
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true
+        },
+        "extraMetadata": {
+            "buildDependenciesFromSource": true
+        },
+        "buildDependenciesFromSource": true
     },
     "dependencies": {
-        "canvas": "^2.11.2",
-        "jimp": "^0.22.12"
+        "jimp": "^0.22.12",
+        "path": "^0.12.7"
     }
 }

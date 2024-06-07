@@ -4,19 +4,19 @@ let win;
 
 function createWindow() {
     win = new BrowserWindow({
-        width: 700,
-        height: 820,
+        width: 920,
+        height: 1000,
         webPreferences: {
             preload: __dirname + '/preload.js',
             contextIsolation: true,
             nodeIntegration: false,
             sandbox: true,
             enableRemoteModule: false
-        }
+        },
+        icon: path.join(__dirname, 'assets/icons/ico.png')
     });
 
     win.loadFile('index.html');
-    win.webContents.openDevTools();
 }
 
 

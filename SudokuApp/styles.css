@@ -4,19 +4,27 @@
 }
 
 #loadFile {
-    border: 1px solid black;
-    border-radius: 7px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 400;
+    padding: 10px;
+    border: 1px solid #b3e5fc;
+    border-radius: 10px;
     transition: all 1.4s ease;
     width: 6em;
-    height: 2em;
-    color: black;
+    color: #b3e5fc;
     background-color: white;
     font-size: 10px;
-    padding: .3rem;
+    padding: .1rem;
+    align-items: center;
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
 }
 
 #loadFile:hover{
     color: white;
-    background-color: cadetblue;
+    background-color: #b3e5fc;
     cursor: pointer;
 }

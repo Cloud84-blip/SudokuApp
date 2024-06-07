@@ -55,8 +55,10 @@ class SudokuImageGenerator {
             for (let j = 0; j < this.gridSize; j++) {
                 const number = this.sudokuGrid[i * this.gridSize + j];
                 if (number !== 0) {
-                    const x = j * this.cellSize + this.cellSize / 4;
-                    const y = i * this.cellSize + this.cellSize / 4;
+                    const textWidth = Jimp.measureText(font, number.toString());
+                    const textHeight = Jimp.measureTextHeight(font, number.toString(), this.cellSize);
+                    const x = j * this.cellSize + (this.cellSize - textWidth) / 2;
+                    const y = i * this.cellSize + (this.cellSize - textHeight) / 2;
                     image.print(font, x, y, number.toString());
                 }
             }
