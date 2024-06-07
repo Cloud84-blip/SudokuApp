@@ -1,0 +1,22 @@
+#map {
+    height: 100vh;
+    width: 100%;
+}
+
+#loadFile {
+    border: 1px solid black;
+    border-radius: 7px;
+    transition: all 1.4s ease;
+    width: 6em;
+    height: 2em;
+    color: black;
+    background-color: white;
+    font-size: 10px;
+    padding: .3rem;
+}
+
+#loadFile:hover{
+    color: white;
+    background-color: cadetblue;
+    cursor: pointer;
+}
